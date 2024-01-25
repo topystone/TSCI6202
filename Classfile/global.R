@@ -1,5 +1,6 @@
 library(dplyr)
 library(shiny)
+library(ggplot2)
 
 Rdatasum <-. %>%
   sapply(function(xx) tryCatch(data.frame(class.type=paste(class(xx), collapse=","),
