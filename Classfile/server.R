@@ -15,17 +15,35 @@ function(input, output, session) {
     output$distPlot <- renderPlot({
 
         # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # x    <- faithful[, 2]
+        # bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
         # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
+        # hist(x, breaks = bins, col = 'darkgray', border = 'white',
+        #      xlab = 'Waiting time to next eruption (in mins)',
+        #      main = 'Histogram of waiting times')
+        ggplot(faithful,aes(x=waiting))+geom_histogram(bins=input$bins)
 
     })
-    observe(if (input$debug > 0) {browser()} )
+    RV <-reactiveValues()
+    observe(RV$selected.dataset<-subset(MetaData,label==input$InputDataset))
+
+    output$XvarMenu<-renderUI(selectizeInput("InputXvar","Select X variable",unique(RV$selected.dataset$Column)))
+    output$YvarMenu<-renderUI(selectizeInput("InputYvar","Select Y variable",unique(RV$selected.dataset$Column)))
+
+    observe(RV$plotcommand<-sprintf('as.data.frame(%s::%s) %%>%%
+                                     ggplot(aes(x=%s,y=%s))+geom_point()',
+                                     RV$selected.dataset$package[1],
+                                     RV$selected.dataset$item[1],
+                                     input$InputXvar,input$InputYvar))
+    output$plotoutput<-renderPlot(RV$plotcommand %>% parse(text=.) %>% eval())
+    output$plotcommand<-renderText(RV$plotcommand)
+
+        observe(if (input$debug > 0) {browser()} )
+
 }
+
+
 
 # testdata<-subset(MetaData,label==input$InputDataset)
 # foo<-new.env()
