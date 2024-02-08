@@ -21,6 +21,12 @@ fluidPage(
           selectizeInput("InputDataset","Select Dataset",unique(MetaData$label)),
           uiOutput("XvarMenu"),
           uiOutput("YvarMenu"),
+          uiOutput("ColorvarMenu"),
+          uiOutput("SizevarMenu"),
+          uiOutput("AlphavarMenu"),
+          uiOutput("Facet1varMenu"),
+          uiOutput("Facet2varMenu"),
+          actionButton("Update", "Update"),
           actionButton("debug", "Debug"), # inputId and label are required
         ),
 

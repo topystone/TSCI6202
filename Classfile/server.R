@@ -28,14 +28,34 @@ function(input, output, session) {
     RV <-reactiveValues()
     observe(RV$selected.dataset<-subset(MetaData,label==input$InputDataset))
 
+# create dynamic menus
     output$XvarMenu<-renderUI(selectizeInput("InputXvar","Select X variable",unique(RV$selected.dataset$Column)))
     output$YvarMenu<-renderUI(selectizeInput("InputYvar","Select Y variable",unique(RV$selected.dataset$Column)))
+    output$ColorvarMenu<-renderUI(selectizeInput("InputColorvar","Select color",c("NULL",unique(RV$selected.dataset$Column))))
+    output$SizevarMenu<-renderUI(selectizeInput("InputSizevar","Select size",c("NULL", unique(RV$selected.dataset$Column))))
+    output$AlphavarMenu<-renderUI(selectizeInput("InputAlphavar","Select alpha",c("NULL",unique(RV$selected.dataset$Column))))
+    output$Facet1varMenu<-renderUI(selectizeInput("InputFacet1var","Select Facet1",c("NULL",subset(RV$selected.dataset,unique <7)$Column)))
+    output$Facet2varMenu<-renderUI(selectizeInput("InputFacet2var","Select Facet2",c("NULL",subset(RV$selected.dataset,unique <7)$Column)))
 
-    observe(RV$plotcommand<-sprintf('as.data.frame(%s::%s) %%>%%
-                                     ggplot(aes(x=%s,y=%s))+geom_point()',
-                                     RV$selected.dataset$package[1],
-                                     RV$selected.dataset$item[1],
-                                     input$InputXvar,input$InputYvar))
+    # plot command
+    observe({
+      input$Update;
+      Facet1<-isolate(input$Facet1var);
+      Facet2<-isolate(input$Facet2var);
+      isolate(
+        RV$plotcommand <- sprintf(
+          'as.data.frame(%s::%s) %%>%% ggplot(aes(x=%s,y=%s,color=%s,size=%s,alpha=%s))+geom_point()',
+          RV$selected.dataset$package[1],
+          RV$selected.dataset$item[1],
+          input$InputXvar,
+          input$InputYvar,
+          input$InputColorvar,
+          input$InputSizevar,
+          input$InputAlphavar
+        )
+      )
+    })
+
     output$plotoutput<-renderPlot(RV$plotcommand %>% parse(text=.) %>% eval())
     output$plotcommand<-renderText(RV$plotcommand)
 
