@@ -40,8 +40,15 @@ function(input, output, session) {
     # plot command
     observe({
       input$Update;
-      Facet1<-isolate(input$Facet1var);
-      Facet2<-isolate(input$Facet2var);
+      Facet1<-isolate(input$InputFacet1var);
+      Facet2<-isolate(input$InputFacet2var);
+      Facetcode<-case_when(Facet1=="NULL"&Facet2=="NULL"~"",
+                Facet1==Facet2~sprintf("+facet_wrap(vars(%s))",Facet1),
+                Facet1=="NULL"~sprintf("+facet_grid(rows=NA,cols=vars(%s))",Facet2),
+                Facet2=="NULL"~sprintf("+facet_grid(rows=vars(%s),cols=NA)",Facet1),
+                Facet1!="NULL"&Facet2!="NULL"~sprintf("+facet_grid(rows=vars(%s),cols=vars(%s))",Facet1,Facet2),
+                TRUE~"EXCEPTION"
+      );
       isolate(
         RV$plotcommand <- sprintf(
           'as.data.frame(%s::%s) %%>%% ggplot(aes(x=%s,y=%s,color=%s,size=%s,alpha=%s))+geom_point()',
@@ -52,7 +59,8 @@ function(input, output, session) {
           input$InputColorvar,
           input$InputSizevar,
           input$InputAlphavar
-        )
+          # combining basic plotcommand with "Facetcode" from above
+        ) %>% paste(Facetcode)
       )
     })
 
