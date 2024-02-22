@@ -29,13 +29,20 @@ function(input, output, session) {
     observe(RV$selected.dataset<-subset(MetaData,label==input$InputDataset))
 
 # create dynamic menus
-    output$XvarMenu<-renderUI(selectizeInput("InputXvar","Select X variable",unique(RV$selected.dataset$Column)))
-    output$YvarMenu<-renderUI(selectizeInput("InputYvar","Select Y variable",unique(RV$selected.dataset$Column)))
-    output$ColorvarMenu<-renderUI(selectizeInput("InputColorvar","Select color",c("NULL",unique(RV$selected.dataset$Column))))
-    output$SizevarMenu<-renderUI(selectizeInput("InputSizevar","Select size",c("NULL", unique(RV$selected.dataset$Column))))
-    output$AlphavarMenu<-renderUI(selectizeInput("InputAlphavar","Select alpha",c("NULL",unique(RV$selected.dataset$Column))))
+    # output$XvarMenu<-renderUI(selectizeInput("InputXvar","Select X variable",unique(RV$selected.dataset$Column)))
+    # output$YvarMenu<-renderUI(selectizeInput("InputYvar","Select Y variable",unique(RV$selected.dataset$Column)))
+    # output$ZvarMenu<-renderUI(selectizeInput("InputZvar","Select Z variable",unique(RV$selected.dataset$Column)))
+    # output$ColorvarMenu<-renderUI(selectizeInput("InputColorvar","Select color",c("NULL",unique(RV$selected.dataset$Column))))
+    # output$SizevarMenu<-renderUI(selectizeInput("InputSizevar","Select size",c("NULL", unique(RV$selected.dataset$Column))))
+    # output$AlphavarMenu<-renderUI(selectizeInput("InputAlphavar","Select alpha",c("NULL",unique(RV$selected.dataset$Column))))
+    output$AESMenus<-renderUI(lapply(c(ggCoreAes,ggOtherAes),
+                                     function (xx) {
+                                       selectizeInput(AesIDs, AesLabels,
+                                                      c("NULL",unique(RV$selected.dataset$Column)))
+                                       }))
     output$Facet1varMenu<-renderUI(selectizeInput("InputFacet1var","Select Facet1",c("NULL",subset(RV$selected.dataset,unique <7)$Column)))
     output$Facet2varMenu<-renderUI(selectizeInput("InputFacet2var","Select Facet2",c("NULL",subset(RV$selected.dataset,unique <7)$Column)))
+
 
     # plot command
     observe({
@@ -51,14 +58,19 @@ function(input, output, session) {
       );
       isolate(
         RV$plotcommand <- sprintf(
-          'as.data.frame(%s::%s) %%>%% ggplot(aes(x=%s,y=%s,color=%s,size=%s,alpha=%s))+geom_point()',
+          'as.data.frame(%s::%s) %%>%% ggplot(aes(%s))+%s',
           RV$selected.dataset$package[1],
           RV$selected.dataset$item[1],
-          input$InputXvar,
-          input$InputYvar,
-          input$InputColorvar,
-          input$InputSizevar,
-          input$InputAlphavar
+          sapply(AesIDs,function(xx) if(input[[xx]]!="NULL") input[[xx]]) %>%
+            unlist %>%
+            paste0(gsub("_var","",names(.)),"=",.,collapse=","),
+          # input$InputXvar,
+          # input$InputYvar,
+          # input$InputZvar,
+          # input$InputColorvar,
+          # input$InputSizevar,
+          # input$InputAlphavar,
+          paste0(input$Layers,"()",collapse=" + ")
           # combining basic plotcommand with "Facetcode" from above
         ) %>% paste(Facetcode)
       )
