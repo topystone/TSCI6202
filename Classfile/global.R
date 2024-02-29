@@ -15,8 +15,10 @@ ggCoreAes <- c('x','xmax','xmin','y','ymax','ymin','angle','intercept','label',
 # Aesthetic mappings that at least one geom_* function can use
 ggOtherAes <- c('colour','fill','linetype','linewidth','shape','size','alpha')
 
-AesIDs<-paste0(c(ggCoreAes,ggOtherAes),"_var")
-AesLabels<-sprintf("Select %s variable",c(ggCoreAes,ggOtherAes))
+ggAllAes<-c(ggCoreAes,ggOtherAes)
+
+AesIDs<-paste0(ggAllAes,"_var")
+AesLabels<-sprintf("Select %s variable",ggAllAes)
 
 #`geom_ribbon()` requires the following missing aesthetics: ymin and ymax or xmin and xmax
 #`geom_curve()` requires the following missing aesthetics: xend and yend
