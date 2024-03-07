@@ -8,16 +8,23 @@ if(file.exists("functions.R")) source("functions.R")
 AESsummary<-summarize_ggfunctions(payload=sggf_listAES)
 
 # Aesthetic mappings that at least one geom_* function requires
-ggCoreAes <- c('x','xmax','xmin','y','ymax','ymin','angle','intercept','label',
-               'lower','middle','radius','slope','upper','xend','xintercept',
-               'xlower','xmiddle','xupper','yend','yintercept')
+ggCoreAes <- sapply(AESsummary,function(xx) xx$required) %>% unlist() %>%
+  strsplit(split="|",fixed=TRUE) %>% unlist() %>% table() %>% sort(dec=TRUE) %>% names()
+
+# c('x','xmax','xmin','y','ymax','ymin','angle','intercept','label',
+# 'lower','middle','radius','slope','upper','xend','xintercept',
+# 'xlower','xmiddle','xupper','yend','yintercept')
 
 # Aesthetic mappings that at least one geom_* function can use
-ggOtherAes <- c('colour','fill','linetype','linewidth','shape','size','alpha')
+ggOtherAes <-sapply(AESsummary,function(xx) xx$other) %>% unlist() %>%
+  strsplit(split="|",fixed=TRUE) %>% unlist() %>% table() %>% sort(dec=TRUE) %>%
+  names() %>% setdiff(ggCoreAes) %>% c("alpha")
+
+#c('colour','fill','linetype','linewidth','shape','size','alpha')
 
 ggAllAes<-c(ggCoreAes,ggOtherAes)
 
-AesIDs<-paste0(ggAllAes,"_var")
+  AesIDs<-paste0(ggAllAes,"_var")
 AesLabels<-sprintf("Select %s variable",ggAllAes)
 
 #`geom_ribbon()` requires the following missing aesthetics: ymin and ymax or xmin and xmax

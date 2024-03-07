@@ -1,4 +1,10 @@
-col-sm-4 {
+.col-sm-4 {
   overflow-y: scroll;
-  height: 50vh;
+  height: 80vh;
 }
+
+/*div { color : red; height: 50vh } /*applies to every div tag*/
+div.myclass { color : red; height: 50vh } /*applies to every div with class of "myclass"*/
+.myclass { color : red; height: 50vh } /*applies to everything with class of "myclass"*/
+div#myuniqueid { color : red; height: 50vh } /*applies to a specific div with id of "myuniquieid"*/
+#myuniqueid { color : red; height: 50vh } /*applies to a specific div (omitted) with id of "myuniquieid"*/
