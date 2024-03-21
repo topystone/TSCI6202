@@ -5,11 +5,17 @@
 # https://shiny.posit.co/
 
 library(shiny)
+library(shinydashboard)
+library(shinyWidgets)
+library(shinyjs)
+
 
 fluidPage(
   tags$head(tags$link(rel="stylesheet",type="text/css",href="dashboard.css")),
 
 # script, stylesheet are the most common rels
+
+useShinydashboard(), useShinyjs(),
 
   titlePanel("MetaData Plot"),
 
@@ -19,14 +25,21 @@ fluidPage(
       selectizeInput("InputDataset","Select Dataset",unique(MetaData$label)),
       selectizeInput("Layers","Select a layer (a ggplot geom function)",names(AESsummary),selected="geom_point",multiple=TRUE),
       uiOutput('y_menu'),
+      box(title='additional y variables',width=NULL,collapsible=T,collapsed=T,
+        uiOutput('ymax_menu'),
+        uiOutput('ymin_menu'),
+        uiOutput('yintercept_menu'),
+        uiOutput('yend_menu')
+      ),
       uiOutput('x_menu'),
       uiOutput('xmax_menu'),
       uiOutput('xmin_menu'),
-      uiOutput('ymax_menu'),
-      uiOutput('ymin_menu'),
-      uiOutput('label_menu'),
+      uiOutput('xupper_menu'),
+      uiOutput('xmiddle_menu'),
+      uiOutput('xintercept_menu'),
       uiOutput('xend_menu'),
-      uiOutput('yend_menu'),
+      uiOutput('xlower_menu'),
+      uiOutput('label_menu'),
       uiOutput('angle_menu'),
       uiOutput('intercept_menu'),
       uiOutput('lower_menu'),
@@ -34,11 +47,6 @@ fluidPage(
       uiOutput('radius_menu'),
       uiOutput('slope_menu'),
       uiOutput('upper_menu'),
-      uiOutput('xintercept_menu'),
-      uiOutput('xlower_menu'),
-      uiOutput('xmiddle_menu'),
-      uiOutput('xupper_menu'),
-      uiOutput('yintercept_menu'),
       uiOutput('shape_menu'),
       uiOutput('size_menu'),
       uiOutput('colour_menu'),
