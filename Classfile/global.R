@@ -18,13 +18,20 @@ ggCoreAes <- sapply(AESsummary,function(xx) xx$required) %>% unlist() %>%
 # Aesthetic mappings that at least one geom_* function can use
 ggOtherAes <-sapply(AESsummary,function(xx) xx$other) %>% unlist() %>%
   strsplit(split="|",fixed=TRUE) %>% unlist() %>% table() %>% sort(dec=TRUE) %>%
-  names() %>% setdiff(ggCoreAes) %>% c("alpha")
+  names() %>% setdiff(ggCoreAes) %>% c("alpha","group")
 
 #c('colour','fill','linetype','linewidth','shape','size','alpha')
 
 ggAllAes<-c(ggCoreAes,ggOtherAes)
 
-  AesIDs<-paste0(ggAllAes,"_var")
+ggYAes<-grep("^y",ggAllAes,val=TRUE) %>% setdiff("y")
+ggXAes<-grep("^x",ggAllAes,val=TRUE) %>% setdiff("x")
+
+ggUncommonAes<-setdiff(ggAllAes,c(ggOtherAes,ggXAes,ggYAes,"x","y"))
+
+#ggPopularAes<-intersect(ggAllAes,c('colour','fill','linetype','linewidth','shape','size','alpha','group'))
+
+AesIDs<-paste0(ggAllAes,"_var")
 AesLabels<-sprintf("Select %s variable",ggAllAes)
 
 #`geom_ribbon()` requires the following missing aesthetics: ymin and ymax or xmin and xmax
