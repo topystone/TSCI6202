@@ -2,6 +2,7 @@ library(dplyr)
 library(shiny)
 library(ggplot2)
 library(rio)
+library(hexbin)
 
 if(file.exists("functions.R")) source("functions.R")
 
@@ -18,7 +19,7 @@ ggCoreAes <- sapply(AESsummary,function(xx) xx$required) %>% unlist() %>%
 # Aesthetic mappings that at least one geom_* function can use
 ggOtherAes <-sapply(AESsummary,function(xx) xx$other) %>% unlist() %>%
   strsplit(split="|",fixed=TRUE) %>% unlist() %>% table() %>% sort(dec=TRUE) %>%
-  names() %>% setdiff(ggCoreAes) %>% c("alpha","group")
+  names() %>% setdiff(ggCoreAes) %>% c("alpha","group","z")
 
 #c('colour','fill','linetype','linewidth','shape','size','alpha')
 
