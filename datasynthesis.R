@@ -1,0 +1,8 @@
+library(synthpop)
+library(dplyr)
+library(rio)
+rawdata<-import("inputdata.csv")
+syndata<-syn(rawdata)
+summary(syndata)
+compare(syndata,rawdata)
+export(syndata$syn,"syndata_df.csv")
