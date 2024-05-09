@@ -37,3 +37,10 @@ dependent_variables<-c("vent_days","bpd_or_death")
 
 mutate(d0,gender=factor(gender),bpd_or_death=ordered(bpd_or_death)) %>%
   ggduo(mapping=aes(color = gender),independent_variables,dependent_variables)
+
+ggplot(mtcars, aes(mpg, wt)) +
+  geom_point(aes(colour = factor(cyl))) +
+  scale_color_manual(values = c("6"="#BDD9346c","8"="red","4"="green")) +
+  geom_text(aes(label=gear),nudge_x = 0.5,nudge_y=0.1) +
+  geom_text(x=15,y=2,label="test")
+
